@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Loading from '@/components/Loading';
 import UsersHeader from './_components/UsersHeader';
-import SearchAndFilter from './_components/SearchAndFilter';
 import UserCard from './_components/UserCard';
 import EmptyState from './_components/EmptyState';
 import { getBadge } from '@/lib/badges';
@@ -14,7 +13,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: string; // Added missing role property
+  role: string;
   isVerified: boolean;
   profilePicture: string;
   questionCount: number;
@@ -39,6 +38,7 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterRole, setFilterRole] = useState('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -163,45 +163,48 @@ export default function UsersPage() {
       (filterStatus === 'verified' && user.isVerified) ||
       (filterStatus === 'unverified' && !user.isVerified);
     
-    return matchesSearch && matchesFilter && user.id !== currentUser?.id;
+    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    
+    return matchesSearch && matchesFilter && matchesRole && user.id !== currentUser?.id;
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-slate-50 to-zinc-50">
       <UsersHeader 
         totalUsers={users.length} 
-        totalConnections={acceptedConnections.length} 
+        totalConnections={acceptedConnections.length}
+        searchQuery={searchQuery}
+        filterStatus={filterStatus}
+        filterRole={filterRole}
+        onSearchChange={setSearchQuery}
+        onFilterChange={setFilterStatus}
+        onFilterRoleChange={setFilterRole}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SearchAndFilter
-          searchQuery={searchQuery}
-          filterStatus={filterStatus}
-          onSearchChange={setSearchQuery}
-          onFilterChange={setFilterStatus}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredUsers.map(user => {
-            const connection = getConnectionStatus(user.id);
-            const badge = user.questionCount > 0 ? getBadge(user.questionCount) : null;
-            
-            return (
-              <UserCard
-                key={user.id}
-                user={user}
-                badge={badge}
-                connection={connection}
-                currentUserId={currentUser?.id}
-                onConnect={handleConnect}
-                onAccept={handleAcceptRequest}
-                onReject={handleRejectRequest}
-              />
-            );
-          })}
-        </div>
-
-        {filteredUsers.length === 0 && <EmptyState />}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {filteredUsers.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredUsers.map(user => {
+              const connection = getConnectionStatus(user.id);
+              const badge = user.questionCount > 0 ? getBadge(user.questionCount) : null;
+              
+              return (
+                <UserCard
+                  key={user.id}
+                  user={user}
+                  badge={badge}
+                  connection={connection}
+                  currentUserId={currentUser?.id}
+                  onConnect={handleConnect}
+                  onAccept={handleAcceptRequest}
+                  onReject={handleRejectRequest}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
