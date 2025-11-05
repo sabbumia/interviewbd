@@ -17,6 +17,9 @@ import {
   Award,
   Sparkles,
   ChevronDown,
+  ShieldCheck,
+  Check,
+  Crown
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -158,8 +161,18 @@ export default function Navbar() {
                       href="/admin"
                       className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 hover:scale-105 transform transition-all duration-300 rounded-lg shadow-lg flex items-center gap-2"
                     >
-                      <Shield className="w-4 h-4" />
+                      <Crown className="w-4 h-4" />
                       Admin
+                    </Link>
+                  )}
+                  {/* Moderator Badge */}
+                  {user.role === 'moderator' && (
+                    <Link
+                      href="/moderator"
+                      className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-orange-500 to-pink-500 text-white hover:from-orange-600 hover:to-pink-600 hover:scale-105 transform transition-all duration-300 rounded-lg shadow-lg flex items-center gap-2"
+                    >
+                      <ShieldCheck className="w-4 h-4" />
+                      Moderator
                     </Link>
                   )}
 
@@ -181,16 +194,17 @@ export default function Navbar() {
                         />
                         {user.isVerified && (
                           <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center border-2 border-white">
-                            <Award className="w-3 h-3 text-white" />
+                            <Check className="w-3 h-3 text-white" />
                           </div>
                         )}
+                        
                       </div>
                       <div className="hidden lg:block text-left">
                         <div className="text-sm font-bold text-gray-900">
                           {user.name}
                         </div>
                         <div className="text-xs text-gray-500 capitalize">
-                          {user.role}
+                          <div className="flex items-center">{user.role === "admin" && <Crown className="w-3 h-3 text-red-400 mr-1" />} {user.role === "moderator" && <ShieldCheck className="w-3 h-3 text-orange-400 mr-1" />}  {user.role}</div>
                         </div>
                       </div>
                       <ChevronDown

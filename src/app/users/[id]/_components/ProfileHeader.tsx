@@ -1,7 +1,19 @@
 // src/app/users/[id]/_components/ProfileHeader.tsx
-import Link from 'next/link';
-import { Check, Calendar, Award, Clock, MessageCircle, UserPlus, X, Mail, Shield } from 'lucide-react';
-import { Badge } from '@/lib/badges';
+import Link from "next/link";
+import {
+  Check,
+  Calendar,
+  Award,
+  Clock,
+  MessageCircle,
+  UserPlus,
+  X,
+  Mail,
+  Shield,
+  ShieldCheck,
+  Crown,
+} from "lucide-react";
+import { Badge } from "@/lib/badges";
 
 interface ProfileHeaderProps {
   user: {
@@ -34,13 +46,15 @@ export default function ProfileHeader({
 }: ProfileHeaderProps) {
   const getRoleColor = (role: string) => {
     const colors: Record<string, string> = {
-      admin: 'bg-purple-100 text-purple-700 border-purple-200',
-      moderator: 'bg-blue-100 text-blue-700 border-blue-200',
-      user: 'bg-gray-100 text-gray-700 border-gray-200',
-      premium: 'bg-amber-100 text-amber-700 border-amber-200',
-      member: 'bg-green-100 text-green-700 border-green-200',
+      admin: "bg-purple-100 text-purple-700 border-purple-200",
+      moderator: "bg-blue-100 text-blue-700 border-blue-200",
+      user: "bg-gray-100 text-gray-700 border-gray-200",
+      premium: "bg-amber-100 text-amber-700 border-amber-200",
+      member: "bg-green-100 text-green-700 border-green-200",
     };
-    return colors[role.toLowerCase()] || 'bg-gray-100 text-gray-700 border-gray-200';
+    return (
+      colors[role.toLowerCase()] || "bg-gray-100 text-gray-700 border-gray-200"
+    );
   };
 
   return (
@@ -48,18 +62,20 @@ export default function ProfileHeader({
       {/* Cover Banner with Name */}
       <div className="h-48 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 relative px-6 md:px-8">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
-        
+
         <div className="relative h-full flex items-end justify-between pb-6 z-10">
           {/* Name Section - Left */}
           <div className="flex items-center gap-3 flex-wrap ml-44">
-            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">{user.name}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
+              {user.name}
+            </h1>
           </div>
 
           {/* Action Buttons - Right */}
           {!isOwnProfile && (
             <div className="hidden md:flex gap-3">
               {!connection && (
-                <button 
+                <button
                   onClick={onConnect}
                   className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-all font-semibold shadow-lg hover:shadow-xl"
                 >
@@ -68,7 +84,7 @@ export default function ProfileHeader({
                 </button>
               )}
 
-              {connection && connection.status === 'pending' && (
+              {connection && connection.status === "pending" && (
                 <>
                   {connection.userId === currentUserId ? (
                     <div className="flex items-center gap-2 px-5 py-2.5 bg-yellow-100/90 backdrop-blur-sm border-2 border-yellow-300 rounded-lg text-yellow-800 font-semibold shadow-lg">
@@ -96,7 +112,7 @@ export default function ProfileHeader({
                 </>
               )}
 
-              {connection && connection.status === 'accepted' && (
+              {connection && connection.status === "accepted" && (
                 <Link
                   href={`/messages?userId=${user.id}`}
                   className="flex items-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 transition-all font-semibold shadow-lg hover:shadow-xl"
@@ -120,7 +136,7 @@ export default function ProfileHeader({
           )}
         </div>
       </div>
-      
+
       <div className="px-6 md:px-8 pb-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Section - Profile Picture */}
@@ -131,14 +147,34 @@ export default function ProfileHeader({
                 alt={user.name}
                 className="w-36 h-36 rounded-full object-cover border-4 border-white shadow-xl bg-white"
                 onError={(e) => {
-                  e.currentTarget.src = 'https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg';
+                  e.currentTarget.src =
+                    "https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg";
                 }}
               />
-              
+
               {/* Verified Badge - Top Right */}
               {user.isVerified && (
-                <div className="absolute top-1 right-1 bg-blue-600 rounded-full p-1.5 border-2 border-white shadow-md" title="Verified User">
+                <div
+                  className="absolute bottom-1 right-1 bg-blue-600 rounded-full p-1.5 border-2 border-white shadow-md"
+                  title="Verified User"
+                >
                   <Check className="w-4 h-4 text-white" />
+                </div>
+              )}
+              {user.role === "admin" && (
+                <div
+                  className="absolute top-1 right-1 bg-gradient-to-br from-red-500 to-orange-600 rounded-full p-1.5 border-2 border-white shadow-md"
+                  title="Verified User"
+                >
+                  <Crown className="w-4 h-4 text-white" />
+                </div>
+              )}
+              {user.role === "moderator" && (
+                <div
+                  className="absolute top-1 right-1 bg-gradient-to-br from-red-400 to-yellow-800  rounded-full p-1.5 border-2 border-white shadow-md"
+                  title="Verified User"
+                >
+                  <ShieldCheck className="w-4 h-4 text-white" />
                 </div>
               )}
             </div>
@@ -152,27 +188,37 @@ export default function ProfileHeader({
                 <Mail className="w-4 h-4" />
                 <span className="text-sm font-medium">{user.email}</span>
               </div>
-              
+
               {/* Role */}
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border ${getRoleColor(user.role)} font-medium text-sm w-fit`}>
-                <Shield className="w-4 h-4" />
+              <div
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border ${getRoleColor(
+                  user.role
+                )} font-medium text-sm w-fit`}
+              >
+                {user.role === "admin" && <Crown className="w-4 h-4" />}{" "}
+                {user.role === "moderator" && (
+                  <ShieldCheck className="w-4 h-4" />
+                )}
                 <span className="capitalize">{user.role}</span>
               </div>
 
               {/* Member Since */}
               <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
                 <Calendar className="w-4 h-4" />
-                <span>Member since {new Date(user.createdAt).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long' 
-                })}</span>
+                <span>
+                  Member since{" "}
+                  {new Date(user.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                  })}
+                </span>
               </div>
 
               {/* Mobile Action Buttons */}
               {!isOwnProfile && (
                 <div className="md:hidden mt-3 flex flex-col gap-2">
                   {!connection && (
-                    <button 
+                    <button
                       onClick={onConnect}
                       className="flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-semibold w-full"
                     >
@@ -181,7 +227,7 @@ export default function ProfileHeader({
                     </button>
                   )}
 
-                  {connection && connection.status === 'pending' && (
+                  {connection && connection.status === "pending" && (
                     <>
                       {connection.userId === currentUserId ? (
                         <div className="flex items-center justify-center gap-2 px-5 py-2.5 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700 font-semibold w-full">
@@ -209,7 +255,7 @@ export default function ProfileHeader({
                     </>
                   )}
 
-                  {connection && connection.status === 'accepted' && (
+                  {connection && connection.status === "accepted" && (
                     <Link
                       href={`/messages?userId=${user.id}`}
                       className="flex items-center justify-center gap-2 bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 transition-colors font-semibold w-full"
@@ -236,19 +282,31 @@ export default function ProfileHeader({
 
           {/* Right Section - Badge */}
           {badge && (
-            <div className="lg:w-72 pt-2">
+            <div className="lg:w-82 pt-2">
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-4 shadow-sm h-full">
-                <div className="flex items-start gap-3">
-                  <div className="text-4xl flex-shrink-0" aria-label="Badge">
+                <div className="flex items-center gap-4 h-full">
+                  {/* Left Side - Centered Emoji */}
+                  <div
+                    className="text-5xl flex-shrink-0 flex items-center justify-center"
+                    aria-label="Badge"
+                  >
                     {badge.emoji}
                   </div>
-                  <div className="flex-1 min-w-0">
+
+                  {/* Right Side - Centered Text */}
+                  <div className="flex flex-col justify-center min-w-0 h-full">
                     <div className="flex items-center gap-2 mb-1">
                       <Award className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                      <h3 className="font-semibold text-amber-900 text-sm uppercase tracking-wide">Achievement</h3>
+                      <h3 className="font-semibold items-center text-amber-900 text-sm uppercase tracking-wide">
+                        Achievement
+                      </h3>
                     </div>
-                    <p className="font-bold text-gray-900 text-lg mb-1">{badge.name}</p>
-                    <p className="text-sm text-gray-700 leading-relaxed">{badge.description}</p>
+                    <p className="font-bold items-center text-gray-900 text-lg mb-1">
+                      {badge.name}
+                    </p>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {badge.description}
+                    </p>
                   </div>
                 </div>
               </div>

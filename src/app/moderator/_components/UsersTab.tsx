@@ -276,16 +276,9 @@ export default function UsersTab({ users, currentUserId, onRoleChange, onDeleteU
 
                       {/* Role Column */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <select
-                          value={u.role}
-                          onChange={(e) => onRoleChange(u.id, e.target.value)}
-                          className="border-2 border-gray-300 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          disabled={isCurrentUser}
-                        >
-                          <option value="user">👤 User</option>
-                          <option value="moderator">🛡️ Moderator</option>
-                          <option value="admin">⚡ Admin</option>
-                        </select>
+                        {u.role=='user' && <span className="text-sm text-gray-600">👤 User</span>}
+                        {u.role=='moderator' && <span className="text-sm text-gray-600">🛡️ Moderator</span>}
+                        {u.role=='admin' && <span className="text-sm text-gray-600">⚡ Admin</span>}
                       </td>
 
                       {/* Status Column */}

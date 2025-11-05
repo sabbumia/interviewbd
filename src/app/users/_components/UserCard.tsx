@@ -1,6 +1,6 @@
 // src/app/users/_components/UserCard.tsx
 import Link from 'next/link';
-import { Check, Clock, MessageCircle, UserPlus, X, GraduationCap, MapPin, Briefcase, TrendingUp, Shield } from 'lucide-react';
+import { Check, Clock, MessageCircle, UserPlus, X, GraduationCap, MapPin, Briefcase, TrendingUp, Shield, Crown, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/lib/badges';
 
 interface User {
@@ -82,6 +82,16 @@ export default function UserCard({
                 <Check className="w-3 h-3 text-white" />
               </div>
             )}
+            {user.role === "admin" && (
+                    <div className="absolute -top-1 -right-1 p-1 bg-gradient-to-br from-red-500 to-orange-600 rounded-full border-2 border-white">
+                      <Crown className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                  {user.role === "moderator" && (
+                    <div className="absolute -top-1 -right-1 p-1 bg-gradient-to-br from-red-400 to-yellow-800 rounded-full border-2 border-white">
+                      <ShieldCheck className="w-3 h-3 text-white" />
+                    </div>
+                  )}
           </div>
           
           <div className="flex-1 min-w-0">

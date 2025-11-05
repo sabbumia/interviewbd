@@ -1,7 +1,7 @@
 // app/_components/TopContributorsSection.tsx
 'use client';
 import { useRouter } from 'next/navigation';
-import { Trophy, Crown, Award, BookOpen } from 'lucide-react';
+import { Trophy, Crown, Check, BookOpen, Medal, ShieldCheck } from 'lucide-react';
 
 interface User {
   id: string;
@@ -57,7 +57,7 @@ export default function TopContributorsSection({ users }: TopContributorsSection
               >
                 {i === 0 && (
                   <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-bl-full flex items-start justify-end p-2">
-                    <Crown className="w-5 h-5 text-white" />
+                    <Medal className="w-10 h-10 text-white" />
                   </div>
                 )}
                 
@@ -70,7 +70,17 @@ export default function TopContributorsSection({ users }: TopContributorsSection
                   />
                   {user.isVerified && (
                     <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center border-2 border-white">
-                      <Award className="w-4 h-4 text-white" />
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  {user.role === "admin" && (
+                    <div className="absolute -top-1 -right-1 w-7 h-7 bg-gradient-to-br from-red-500 to-orange-600 rounded-full flex items-center justify-center border-2 border-white">
+                      <Crown className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  {user.role === "moderator" && (
+                    <div className="absolute -top-1 -right-1 w-7 h-7 bg-gradient-to-br from-red-400 to-yellow-800 rounded-full flex items-center justify-center border-2 border-white">
+                      <ShieldCheck className="w-4 h-4 text-white" />
                     </div>
                   )}
                 </div>
