@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --placeholder-color: #4b5563; /* Tailwind gray-600 */
+  --input-text-color: #111827; /* Tailwind gray-900 */
 }
 
 @theme inline {
@@ -16,6 +18,8 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --placeholder-color: #9ca3af; /* Tailwind gray-400 for better contrast in dark mode */
+    /* --input-text-color: #f9fafb;  */
   }
 }
 
@@ -25,6 +29,29 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Apply text color for inputs, textareas, selects */
+input,
+textarea,
+select {
+  color: var(--input-text-color);
+}
 
+/* Placeholder text color */
+input::placeholder,
+textarea::placeholder {
+  color: var(--placeholder-color);
+  opacity: 1; /* ensures consistent appearance across browsers */
+}
 
+/* Optional: style search inputs & dropdown selections */
+input[type="search"],
+select {
+  color: var(--input-text-color);
+}
 
+/* For disabled states (optional) */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  color: #9ca3af; /* Tailwind gray-400 */
+}
