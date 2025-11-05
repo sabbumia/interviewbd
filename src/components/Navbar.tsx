@@ -18,29 +18,17 @@ import {
   Sparkles,
   ChevronDown,
 } from 'lucide-react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  isVerified: boolean;
-  profilePicture?: string;
-}
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [unreadUserCount, setUnreadUserCount] = useState(0); // Changed to count users with unread messages
-  const [user, setUser] = useState<User | null>(null);
+  const [unreadUserCount, setUnreadUserCount] = useState(0);
 
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,28 +42,25 @@ export default function Navbar() {
     if (user) {
       fetchUnreadUserCount();
       const interval = setInterval(fetchUnreadUserCount, 30000);
-      return () => clearInterval(interval);
+      
+      // Listen for message updates from other components
+      const handleMessagesUpdate = () => {
+        fetchUnreadUserCount();
+      };
+      window.addEventListener('messages-updated', handleMessagesUpdate);
+      
+      return () => {
+        clearInterval(interval);
+        window.removeEventListener('messages-updated', handleMessagesUpdate);
+      };
     }
   }, [user]);
-
-  const fetchUser = async () => {
-    try {
-      const res = await fetch('/api/auth/me');
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    }
-  };
 
   const fetchUnreadUserCount = async () => {
     try {
       const res = await fetch('/api/messages/unread-by-user');
       if (res.ok) {
         const data = await res.json();
-        // Count how many users have sent unread messages
         const usersWithUnreadMessages = Object.keys(data.unreadCounts || {}).filter(
           (userId) => data.unreadCounts[userId] > 0
         ).length;
@@ -87,8 +72,7 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
+    await logout();
     router.push('/login');
   };
 

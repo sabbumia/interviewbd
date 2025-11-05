@@ -1,9 +1,11 @@
 // src/app/signup/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import Loading from '@/components/Loading';
 
 export default function SignupPage() {
   const [step, setStep] = useState<'register' | 'verify'>('register');
@@ -14,6 +16,14 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { user, refreshUser } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +76,10 @@ export default function SignupPage() {
         return;
       }
 
+      // Refresh user data to update navbar
+      await refreshUser();
+      
+      // Navigate to profile
       router.push('/profile');
     } catch (err) {
       setError('An error occurred');
@@ -99,6 +113,13 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
+
+  // Show loading while checking auth status
+  if (user) {
+    return (
+      <Loading message="Redirecting..." />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">

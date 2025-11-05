@@ -3,10 +3,13 @@
 
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { timeAgo } from "@/lib/timeAgo";
 import Loading from "@/components/Loading";
-import { Search, MoreVertical, Send, Smile, Paperclip, Info } from "lucide-react";
+import { useRefreshMessages } from "@/hooks/useRefreshMessages";
+import MessagesSidebar from "./_components/MessagesSidebar";
+import ChatHeader from "./_components/ChatHeader";
+import MessagesContainer from "./_components/MessagesContainer";
+import MessageInput from "./_components/MessageInput";
+import EmptyState from "./_components/EmptyState";
 
 function MessagesContent() {
   const [user, setUser] = useState<any>(null);
@@ -26,8 +29,9 @@ function MessagesContent() {
   const userScrolledRef = useRef(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+  
+  const { triggerRefresh } = useRefreshMessages();
 
-  // Update user activity every 30 seconds
   useEffect(() => {
     updateActivity();
     const interval = setInterval(updateActivity, 30000);
@@ -66,7 +70,6 @@ function MessagesContent() {
     return () => clearInterval(interval);
   }, [connections]);
 
-  // Filter connections based on search
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredConnections(connections);
@@ -79,7 +82,6 @@ function MessagesContent() {
     }
   }, [searchQuery, connections, user]);
 
-  // Smart scroll: only scroll to bottom when appropriate
   useEffect(() => {
     const messageCountChanged = messages.length !== previousMessageCountRef.current;
     const isNewMessage = messages.length > previousMessageCountRef.current;
@@ -233,6 +235,7 @@ function MessagesContent() {
         method: "PUT",
       });
       fetchUnreadCounts();
+      triggerRefresh();
     } catch (error) {
       console.error("Error marking message as read:", error);
     }
@@ -257,6 +260,7 @@ function MessagesContent() {
         setNewMessage("");
         userScrolledRef.current = false;
         fetchMessages();
+        triggerRefresh();
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -286,6 +290,18 @@ function MessagesContent() {
     }
 
     return `Active ${timeAgo(lastActive)}`;
+  };
+
+  const timeAgo = (date: Date | string) => {
+    const now = new Date();
+    const past = new Date(date);
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return "just now";
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return past.toLocaleDateString();
   };
 
   const getMessageStatus = (msg: any) => {
@@ -319,272 +335,45 @@ function MessagesContent() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-6 px-4">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-[calc(100vh-140px)] flex">
-          {/* Sidebar */}
-          <div className="w-80 border-r border-gray-200 flex flex-col bg-white">
-            {/* Sidebar Header */}
-            <div className="p-4 border-b border-gray-200">
-              <h1 className="text-xl font-semibold text-gray-900 mb-3">Messages</h1>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" />
-                <input
-                  type="text"
-                  placeholder="Search conversations..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
+          <MessagesSidebar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filteredConnections={filteredConnections}
+            selectedUserId={selectedUserId}
+            setSelectedUserId={setSelectedUserId}
+            user={user}
+            unreadCounts={unreadCounts}
+            isUserOnline={isUserOnline}
+            getLastSeenText={getLastSeenText}
+          />
 
-            {/* Connections List */}
-            <div className="flex-1 overflow-y-auto">
-              {filteredConnections.length === 0 ? (
-                <div className="p-6 text-center">
-                  {searchQuery ? (
-                    <p className="text-gray-500 text-sm">No results found</p>
-                  ) : (
-                    <>
-                      <p className="text-gray-500 text-sm mb-2">No connections yet</p>
-                      <Link
-                        href="/users"
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        Find connections
-                      </Link>
-                    </>
-                  )}
-                </div>
-              ) : (
-                <div className="divide-y divide-gray-100">
-                  {filteredConnections.map((conn) => {
-                    const otherUser = conn.userId === user.id ? conn.connectedUser : conn.user;
-                    const unreadCount = unreadCounts[otherUser.id] || 0;
-                    const online = isUserOnline(otherUser.id);
-                    const isSelected = selectedUserId === otherUser.id;
-
-                    return (
-                      <button
-                        key={conn.id}
-                        onClick={() => setSelectedUserId(otherUser.id)}
-                        className={`w-full p-4 hover:bg-gray-50 transition-colors duration-150 flex items-start gap-3 ${
-                          isSelected ? "bg-blue-50 hover:bg-blue-50" : ""
-                        }`}
-                      >
-                        <div className="relative flex-shrink-0">
-                          {otherUser.profilePicture ? (
-                            <img
-                              src={otherUser.profilePicture}
-                              alt={otherUser.name}
-                              className="w-12 h-12 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium">
-                              {otherUser.name.charAt(0).toUpperCase()}
-                            </div>
-                          )}
-                          <div
-                            className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                              online ? "bg-green-500" : "bg-gray-300"
-                            }`}
-                          />
-                        </div>
-
-                        <div className="flex-1 min-w-0 text-left">
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className={`font-medium truncate ${isSelected ? "text-blue-700" : "text-gray-900"}`}>
-                                {otherUser.name}
-                              </span>
-                              {otherUser.isVerified && (
-                                <img
-                                  src="https://res.cloudinary.com/dk7yaqqyt/image/upload/v1762100837/interview-qa-profiles/xf7lo8jpjhqcf6sju1xx.png"
-                                  alt="Verified"
-                                  className="w-4 h-4 flex-shrink-0"
-                                />
-                              )}
-                              {otherUser.role === "admin" && (
-                                <span className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-medium flex-shrink-0">
-                                  Admin
-                                </span>
-                              )}
-                            </div>
-                            {unreadCount > 0 && (
-                              <span className="bg-blue-600 text-white text-xs font-semibold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center flex-shrink-0">
-                                {unreadCount > 99 ? "99+" : unreadCount}
-                              </span>
-                            )}
-                          </div>
-                          <p className={`text-xs truncate ${isSelected ? "text-blue-600" : "text-gray-500"}`}>
-                            {getLastSeenText(otherUser.id)}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Messages Area */}
           <div className="flex-1 flex flex-col bg-gray-50">
             {!selectedUser ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-gray-500 px-4">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                </div>
-                <p className="text-sm font-medium mb-1">Select a conversation</p>
-                <p className="text-xs text-gray-400">Choose a connection to start messaging</p>
-              </div>
+              <EmptyState />
             ) : (
               <>
-                {/* Chat Header */}
-                <div className="px-6 py-4 border-b border-gray-200 bg-white">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        {selectedUser.profilePicture ? (
-                          <img
-                            src={selectedUser.profilePicture}
-                            alt={selectedUser.name}
-                            className="w-11 h-11 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-11 h-11 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium">
-                            {selectedUser.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <div
-                          className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                            isUserOnline(selectedUser.id) ? "bg-green-500" : "bg-gray-300"
-                          }`}
-                        />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-semibold text-gray-900">{selectedUser.name}</span>
-                          {selectedUser.isVerified && (
-                            <img
-                              src="https://res.cloudinary.com/dk7yaqqyt/image/upload/v1762100837/interview-qa-profiles/xf7lo8jpjhqcf6sju1xx.png"
-                              alt="Verified"
-                              className="w-4 h-4"
-                            />
-                          )}
-                          {selectedUser.role === "admin" && (
-                            <span className="text-xs bg-red-50 text-red-600 px-2 py-0.5 rounded font-medium">
-                              Admin
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-gray-500">{getLastSeenText(selectedUser.id)}</p>
-                      </div>
-                    </div>
-                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                      <MoreVertical className="w-5 h-5 text-gray-500" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Messages Container */}
-                <div
-                  ref={messagesContainerRef}
+                <ChatHeader
+                  selectedUser={selectedUser}
+                  isUserOnline={isUserOnline}
+                  getLastSeenText={getLastSeenText}
+                />
+                <MessagesContainer
+                  messages={messages}
+                  user={user}
+                  isAdminMessage={isAdminMessage}
+                  getMessageStatus={getMessageStatus}
+                  // @ts-ignore
+                  messagesContainerRef={messagesContainerRef}
+                  // @ts-ignore
+                  messagesEndRef={messagesEndRef}
                   onScroll={handleScroll}
-                  className="flex-1 overflow-y-auto px-6 py-4 space-y-4"
-                >
-                  {messages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 shadow-sm">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                        </svg>
-                      </div>
-                      <p className="text-sm">No messages yet</p>
-                      <p className="text-xs text-gray-400 mt-1">Send a message to start the conversation</p>
-                    </div>
-                  ) : (
-                    messages.map((msg) => {
-                      const isOwnMessage = msg.senderId === user.id;
-                      const isAdmin = isAdminMessage(msg);
-
-                      return (
-                        <div
-                          key={msg.id}
-                          className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
-                        >
-                          <div className={`max-w-[70%] ${isOwnMessage ? "text-right" : "text-left"}`}>
-                            {isAdmin && !isOwnMessage && (
-                              <div className="flex items-center gap-1 mb-1 ml-1">
-                                <span className="text-xs bg-red-50 text-red-600 px-2 py-1 rounded font-medium">
-                                  Admin Message
-                                </span>
-                              </div>
-                            )}
-                            <div
-                              className={`inline-block px-4 py-2.5 rounded-2xl ${
-                                isOwnMessage
-                                  ? "bg-blue-600 text-white rounded-br-md"
-                                  : isAdmin
-                                  ? "bg-red-50 text-gray-900 border border-red-100 rounded-bl-md"
-                                  : "bg-white text-gray-900 border border-gray-200 rounded-bl-md"
-                              }`}
-                            >
-                              <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-                                {msg.content}
-                              </p>
-                              <div className="flex items-center gap-1.5 justify-end mt-1.5">
-                                <p
-                                  className={`text-xs ${
-                                    isOwnMessage
-                                      ? "text-blue-100"
-                                      : isAdmin
-                                      ? "text-red-400"
-                                      : "text-gray-400"
-                                  }`}
-                                >
-                                  {timeAgo(msg.createdAt)}
-                                </p>
-                                {isOwnMessage && getMessageStatus(msg)}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-
-                {/* Message Input */}
-                <form onSubmit={handleSendMessage} className="px-6 py-4 border-t border-gray-200 bg-white">
-                  <div className="flex items-end gap-3">
-                    <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all">
-                      <textarea
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            handleSendMessage(e);
-                          }
-                        }}
-                        placeholder="Type a message..."
-                        rows={1}
-                        className="w-full px-4 py-3 bg-transparent resize-none focus:outline-none text-sm max-h-32"
-                        style={{ minHeight: "44px" }}
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={!newMessage.trim() || sending}
-                      className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex-shrink-0 shadow-sm hover:shadow disabled:shadow-none"
-                    >
-                      <Send className="w-5 h-5" />
-                    </button>
-                  </div>
-                  <p className="text-xs text-gray-400 mt-2 ml-1">Press Enter to send, Shift + Enter for new line</p>
-                </form>
+                />
+                <MessageInput
+                  newMessage={newMessage}
+                  setNewMessage={setNewMessage}
+                  sending={sending}
+                  onSubmit={handleSendMessage}
+                />
               </>
             )}
           </div>

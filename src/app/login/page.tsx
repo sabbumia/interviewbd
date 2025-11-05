@@ -1,9 +1,11 @@
 // src/app/login/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
+import Loading from '@/components/Loading';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,6 +13,14 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { user, refreshUser } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +41,10 @@ export default function LoginPage() {
         return;
       }
 
+      // Refresh user data to update navbar
+      await refreshUser();
+      
+      // Navigate to home
       router.push('/');
     } catch (err) {
       setError('An error occurred');
@@ -38,6 +52,13 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  // Show loading while checking auth status
+  if (user) {
+    return (
+      <Loading message="Redirecting..." />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
