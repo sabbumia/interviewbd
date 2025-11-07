@@ -8,7 +8,6 @@ import { count, eq, sql } from 'drizzle-orm';
 export async function GET() {
   try {
     const session = await getSession();
-
     if (!session || session.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -46,7 +45,9 @@ export async function GET() {
             id: true,
             name: true,
             email: true,
+            role: true,
             isVerified: true,
+            profilePicture: true, 
           },
         });
 

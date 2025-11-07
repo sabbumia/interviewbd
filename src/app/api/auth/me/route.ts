@@ -35,7 +35,7 @@ export async function GET() {
         id: user.id,
         name: user.name,
         email: user.email,
-        profilePicture: user.profilePicture, // <-- THIS WAS MISSING!
+        profilePicture: user.profilePicture,
         role: user.role,
         isVerified: user.isVerified,
         verificationDetails: user.verificationDetails,
