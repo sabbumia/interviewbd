@@ -186,9 +186,24 @@ export default function ReportsTab({ reports, onReportAction }: ReportsTabProps)
                             <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Posted By</p>
                             <div className="flex items-center gap-2">
                               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span className="text-blue-700 font-bold text-xs">
-                                  {report.question.user.name.charAt(0).toUpperCase()}
-                                </span>
+                                <div className="relative flex-shrink-0">
+                          <img
+                            src={
+                              report.question.user.profilePicture ||
+                              "/default-avatar.png"
+                            }
+                            alt={report.question.user.name}
+                            className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+                            onError={(e) => {
+                              e.currentTarget.src = "/default-avatar.png";
+                            }}
+                          />
+                          {report.question.user.isVerified && (
+                            <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-white shadow-md">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
                               </div>
                               <span className="text-sm font-semibold text-gray-900">{report.question.user.name}</span>
                             </div>
@@ -227,7 +242,28 @@ export default function ReportsTab({ reports, onReportAction }: ReportsTabProps)
                         </div>
                         <div className="mt-3 flex items-center gap-2 text-xs text-red-700">
                           <User className="w-3 h-3" />
-                          <span className="font-medium">Reported by: {report.reportedByUser.name}</span>
+                          <span className="font-medium">Reported by: </span>                         
+                          <div className="relative flex-shrink-0">
+                            <img
+                              src={
+                                report.reportedByUser.profilePicture ||
+                              "/default-avatar.png"
+                            }
+                            alt={report.reportedByUser.name}
+                            className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+                            onError={(e) => {
+                              e.currentTarget.src = "/default-avatar.png";
+                            }}
+                          />
+                          {report.reportedByUser.isVerified && (
+                            <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-white shadow-md">
+                              <Check className="w-2 h-2 text-white" />
+                            </div>
+                          )}
+                        
+                        </div>
+                        {report.reportedByUser.name}
+
                         </div>
                       </div>
 

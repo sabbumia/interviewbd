@@ -271,6 +271,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar
         userName={user.name}
+        userProfilePicture={user.profilePicture ?? ""}
         activeTab={activeTab}
         pendingReportsCount={reports.length}
         pendingVerificationsCount={pendingRequests.length}

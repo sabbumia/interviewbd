@@ -7,6 +7,8 @@ export interface User {
   role: string;
   isVerified: boolean;
   questionCount?: number;
+  totalLikes?: number;
+  profilePicture?: string;
 }
 
 export interface Badge {
