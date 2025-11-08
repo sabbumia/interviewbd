@@ -88,7 +88,7 @@ export default function QuestionsSection({
               )}
 
               <Link
-                href={`/questions/${question.id}`}
+                href={`/fields/${question.category.fieldId}/categories/${question.categoryId}`}
                 className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1"
               >
                 View full question

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { timeAgo } from '@/lib/timeAgo';
 import { getBadge } from '@/lib/badges';
+import { Check, Clock, Eye, EyeOff, ThumbsUp } from 'lucide-react';
 
 interface QuestionCardProps {
   question: {
@@ -38,6 +39,7 @@ export default function QuestionCard({ question, currentUser, onDelete, onLikeTo
   const [showAnswer, setShowAnswer] = useState(false);
 
   const authorBadge = question.user?.questionCount ? getBadge(question.user.questionCount) : null;
+  const defaultAvatar = 'https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg?semt=ais_hybrid&w=740&q=80';
 
   const handleLike = async () => {
     if (!currentUser) {
@@ -125,168 +127,210 @@ export default function QuestionCard({ question, currentUser, onDelete, onLikeTo
     currentUser.role === 'admin' || 
     currentUser.role === 'moderator'
   );
-
-  const defaultAvatar = 'https://img.freepik.com/premium-vector/man-avatar-profile-picture-isolated-background-avatar-profile-picture-man_1293239-4866.jpg?semt=ais_hybrid&w=740&q=80';
+  const canDelete = currentUser && (
+    question.userId === currentUser.id || 
+    currentUser.role === 'admin'
+  );
 
   return (
     <>
-      <div className="bg-white rounded-lg border border-gray-200 hover:border-gray-300 transition-all">
-        {/* Question Section */}
-        <div className="p-5 pb-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3 leading-relaxed">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300 overflow-hidden">
+        {/* Header with Question */}
+        <div className="p-6 pb-4">
+          {/* Timestamp */}
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{timeAgo(question.createdAt)}</span>
+          </div>
+
+          {/* Question Text - Prominent */}
+          <h3 className="text-xl font-bold text-gray-900 mb-4 leading-relaxed">
             {question.questionText}
           </h3>
 
-          {/* User Info - Compact */}
-          <div className="flex items-center gap-2 mb-3">
-            <Link href={`/users/${question.user?.id}`}>
+          {/* Author Info - Compact but Clear */}
+          <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+            <Link href={`/users/${question.user?.id}`} className="relative group">
               <img
                 src={question.user?.profilePicture || defaultAvatar}
                 alt={question.user?.name}
-                className="w-7 h-7 rounded-full object-cover border border-gray-200"
+                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 group-hover:border-blue-400 transition-all"
               />
+              {question.user?.isVerified && (
+                <div className="absolute -top-0.5 -right-0.5 bg-blue-600 rounded-full p-0.5 border-2 border-white shadow-sm">
+                  <Check className="w-2.5 h-2.5 text-white" />
+                </div>
+              )}
             </Link>
             
-            <Link 
-              href={`/users/${question.user?.id}`}
-              className="text-sm font-medium text-gray-700 hover:text-gray-900"
-            >
-              {question.user?.name}
-            </Link>
-            
-            {question.user?.isVerified && (
-              <img
-                src="https://res.cloudinary.com/dk7yaqqyt/image/upload/v1762100837/interview-qa-profiles/xf7lo8jpjhqcf6sju1xx.png"
-                alt="Verified"
-                className="w-4 h-4"
-              />
-            )}
-            
-            {authorBadge && question.user?.isVerified && (
-              <span 
-                className="text-base cursor-help"
-                title={`${authorBadge.name}: ${authorBadge.description}`}
-              >
-                {authorBadge.emoji}
-              </span>
-            )}
-
-            <span className="text-gray-400">·</span>
-            <span className="text-sm text-gray-500">{timeAgo(question.createdAt)}</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <Link 
+                  href={`/users/${question.user?.id}`}
+                  className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                >
+                  {question.user?.name}
+                </Link>
+                {authorBadge && question.user?.isVerified && (
+                  <span 
+                    className="text-sm cursor-help"
+                    title={`${authorBadge.name}: ${authorBadge.description}`}
+                  >
+                    {authorBadge.emoji}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Answer Section */}
+          {/* Answer Section - Enhanced */}
           {!showAnswer ? (
             <button
               onClick={() => setShowAnswer(true)}
-              className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg border border-gray-200 transition-all group"
+              className="w-full group"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-gray-700 font-medium text-sm">View Answer</span>
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-200">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white rounded-lg shadow-sm">
+                    <Eye className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-gray-900">View Answer</p>
+                    <p className="text-xs text-gray-600">Click to reveal the answer</p>
+                  </div>
+                </div>
+                <div className="p-2 bg-white rounded-lg shadow-sm group-hover:translate-x-1 transition-transform">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
               </div>
             </button>
           ) : (
-            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Answer</span>
+            <div className="bg-gradient-to-br from-gray-50 to-blue-50/30 rounded-xl border-2 border-gray-200 overflow-hidden">
+              {/* Answer Header */}
+              <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 bg-green-100 rounded-lg">
+                    <Check className="w-4 h-4 text-green-600" />
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">Model Answer</span>
+                </div>
                 <button
                   onClick={() => setShowAnswer(false)}
-                  className="text-xs text-gray-500 hover:text-gray-700"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
                 >
-                  Hide
+                  <EyeOff className="w-3.5 h-3.5" />
+                  Hide Answer
                 </button>
               </div>
-              <p className="text-gray-800 text-sm whitespace-pre-wrap leading-relaxed">
-                {question.answer}
+
+              {/* Answer Content */}
+              <div className="p-5">
+                <div className="prose prose-sm max-w-none">
+                  <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">
+                    {question.answer}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Action Bar - Enhanced */}
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            {/* Left Actions */}
+            <div className="flex items-center gap-2">
+              {/* Like Button */}
+              <button
+                onClick={handleLike}
+                disabled={loading || !currentUser}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  isLiked 
+                    ? 'bg-red-50 text-red-600 hover:bg-red-100 border-2 border-red-200' 
+                    : 'bg-white text-gray-700 hover:bg-gray-100 border-2 border-gray-200 hover:border-gray-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed shadow-sm`}
+              >
+                <ThumbsUp className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
+                <span>Helpful</span>
+                <span className="px-1.5 py-0.5 bg-gray-100 rounded text-xs font-bold">
+                  {likeCount}
+                </span>
+              </button>
+
+              {/* Report Button */}
+              {currentUser && currentUser.id !== question.userId && (
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-white text-gray-600 hover:bg-gray-100 border-2 border-gray-200 hover:border-gray-300 transition-all shadow-sm"
+                >
+                  <span>🚩</span>
+                  <span>Report</span>
+                </button>
+              )}
+            </div>
+
+            {/* Right Actions - Admin/Edit */}
+            {(canEdit || canDelete) && (
+              <div className="flex items-center gap-3">
+                {canEdit && (
+                  <Link
+                    href={`/questions/${question.id}/edit`}
+                    className="text-sm text-blue-600 hover:text-blue-700 font-semibold hover:underline"
+                  >
+                    Edit
+                  </Link>
+                )}
+                {canDelete && (
+                  <>
+                    <span className="text-gray-300">•</span>
+                    <button
+                      onClick={() => onDelete?.(question.id)}
+                      className="text-sm text-red-600 hover:text-red-700 font-semibold hover:underline"
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Login Prompt */}
+          {!currentUser && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <p className="text-sm text-center text-gray-600">
+                <Link href="/login" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                  Sign in
+                </Link>
+                {' '}to save questions, mark as helpful, and track your progress
               </p>
             </div>
           )}
         </div>
-
-        {/* Action Bar */}
-        <div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Like Button */}
-            <button
-              onClick={handleLike}
-              disabled={loading || !currentUser}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                isLiked 
-                  ? 'bg-red-100 text-red-700 hover:bg-red-200' 
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              <span>{isLiked ? '❤️' : '🤍'}</span>
-              <span>{likeCount}</span>
-            </button>
-
-            {/* Report Button */}
-            {currentUser && currentUser.id !== question.userId && (
-              <button
-                onClick={() => setShowReportModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 transition-all"
-              >
-                <span>🚩</span>
-                <span>Report</span>
-              </button>
-            )}
-          </div>
-
-          {/* Edit/Delete */}
-          {canEdit && (
-            <div className="flex items-center gap-2">
-              <Link
-                href={`/questions/${question.id}/edit`}
-                className="text-sm text-gray-600 hover:text-gray-900 font-medium"
-              >
-                Edit
-              </Link>
-              {onDelete && (
-                <>
-                  <span className="text-gray-300">|</span>
-                  <button
-                    onClick={() => onDelete(question.id)}
-                    className="text-sm text-red-600 hover:text-red-700 font-medium"
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Login Prompt */}
-        {!currentUser && (
-          <div className="px-5 py-2 bg-gray-50 border-t border-gray-200">
-            <p className="text-xs text-gray-500 text-center">
-              <Link href="/login" className="text-gray-900 hover:underline font-medium">
-                Login
-              </Link>
-              {' '}to like or report
-            </p>
-          </div>
-        )}
       </div>
 
-      {/* Report Modal */}
+      {/* Report Modal - Enhanced */}
       {showReportModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Report Question</h3>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <span className="text-2xl">🚩</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Report Question</h3>
+            </div>
             
             <p className="text-sm text-gray-600 mb-4">
-              Please provide a reason for reporting this question.
+              Help us maintain quality content. Please describe the issue with this question.
             </p>
             
             <textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
-              placeholder="Enter reason..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 mb-4 h-32 focus:ring-2 focus:ring-gray-900 focus:border-transparent resize-none text-sm"
+              placeholder="e.g., Incorrect information, inappropriate content, spam..."
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-3 mb-4 h-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
               required
             />
             
@@ -294,16 +338,16 @@ export default function QuestionCard({ question, currentUser, onDelete, onLikeTo
               <button
                 onClick={handleReport}
                 disabled={loading || !reportReason.trim()}
-                className="flex-1 bg-gray-900 text-white py-2.5 rounded-lg hover:bg-gray-800 disabled:bg-gray-400 font-medium text-sm transition-all"
+                className="flex-1 bg-red-600 text-white py-3 rounded-xl hover:bg-red-700 disabled:bg-gray-400 font-semibold text-sm transition-all shadow-sm"
               >
-                {loading ? 'Submitting...' : 'Submit'}
+                {loading ? 'Submitting...' : 'Submit Report'}
               </button>
               <button
                 onClick={() => {
                   setShowReportModal(false);
                   setReportReason('');
                 }}
-                className="px-6 bg-gray-100 text-gray-700 py-2.5 rounded-lg hover:bg-gray-200 font-medium text-sm transition-all"
+                className="px-6 bg-gray-100 text-gray-700 py-3 rounded-xl hover:bg-gray-200 font-semibold text-sm transition-all"
               >
                 Cancel
               </button>

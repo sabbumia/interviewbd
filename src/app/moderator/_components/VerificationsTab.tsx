@@ -1,7 +1,7 @@
 // src/app/admin/_components/VerificationsTab.tsx
 
 import { useState } from "react";
-import { CheckCircle, Check, X, Clock, Award, MapPin, Briefcase, GraduationCap, Phone, ExternalLink, AlertCircle } from "lucide-react";
+import { CheckCircle, Check, X, Clock, Award, MapPin, Briefcase, GraduationCap, Phone, ExternalLink, AlertCircle, Crown, ShieldCheck, Mail } from "lucide-react";
 import { VerificationRequest } from "./types";
 
 interface VerificationsTabProps {
@@ -112,14 +112,21 @@ export default function VerificationsTab({ verificationRequests, onVerificationA
                   {/* Request Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-blue-700 font-bold text-lg">
-                          {request.user.name.charAt(0).toUpperCase()}
-                        </span>
+                      <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <img
+                            src={
+                              request.user.profilePicture 
+                            }
+                            alt={request.user.name}
+                            className="w-14 h-14 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+                            
+                          />
                       </div>
                       <div>
                         <h4 className="font-bold text-lg text-gray-900">{request.user.name}</h4>
-                        <p className="text-sm text-gray-600 mt-0.5">{request.user.email}</p>
+                        <div className="flex items-center gap-1">
+                              <Mail className="w-4 h-4 text-gray-600"/> <p className="text-sm text-gray-600 mt-0.5">{request.user.email}</p>
+                            </div>
                         <div className="flex items-center gap-2 mt-2">
                           <Clock className="w-3.5 h-3.5 text-gray-400" />
                           <p className="text-xs text-gray-500">
@@ -361,21 +368,38 @@ export default function VerificationsTab({ verificationRequests, onVerificationA
                   className="bg-green-50 rounded-xl p-4 border-2 border-green-200 hover:border-green-300 hover:shadow-sm transition-all"
                 >
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
                       <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-green-700 font-bold text-sm">
-                          {request.user.name.charAt(0).toUpperCase()}
-                        </span>
+                       
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={
+                              request.user.profilePicture 
+                            }
+                            alt={request.user.name}
+                            className="w-14 h-14 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+                            
+                          />
+                          {request.user.isVerified && (
+                            <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-white shadow-md">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                          {request.user.role === "admin" && (
+                            <div className="absolute -top-1 -right-1 p-1 bg-gradient-to-br from-red-500 to-orange-600 rounded-full border-2 border-white">
+                              <Crown className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                          {request.user.role === "moderator" && (
+                            <div className="absolute -top-1 -right-1 p-1 bg-gradient-to-br from-red-400 to-yellow-800 rounded-full border-2 border-white">
+                              <ShieldCheck className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4">
                           <span className="font-bold text-gray-900 text-sm">{request.user.name}</span>
-                          <img
-                            src="https://res.cloudinary.com/dk7yaqqyt/image/upload/v1762100837/interview-qa-profiles/xf7lo8jpjhqcf6sju1xx.png"
-                            alt="Verified"
-                            className="w-4 h-4"
-                            title="Verified user"
-                          />
                         </div>
                         <p className="text-xs text-gray-600 mt-0.5">
                           {request.reviewedAt ? new Date(request.reviewedAt).toLocaleDateString('en-US', { 
@@ -387,7 +411,7 @@ export default function VerificationsTab({ verificationRequests, onVerificationA
                       </div>
                     </div>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
+                  <span className="inline-flex items-center gap-1.5 bg-green-600 text-white mt-2 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">
                     <CheckCircle className="w-3.5 h-3.5" />
                     Verified
                   </span>

@@ -8,16 +8,12 @@ interface FieldsTabProps {
   fields: Field[];
   onCreateField: (name: string, description: string) => void;
   onCreateCategory: (name: string, description: string, fieldId: string) => void;
-  onDeleteField: (fieldId: string) => void;
-  onDeleteCategory: (categoryId: string) => void;
 }
 
 export default function FieldsTab({
   fields,
   onCreateField,
   onCreateCategory,
-  onDeleteField,
-  onDeleteCategory,
 }: FieldsTabProps) {
   const [newFieldName, setNewFieldName] = useState("");
   const [newFieldDesc, setNewFieldDesc] = useState("");
@@ -316,14 +312,6 @@ export default function FieldsTab({
                           )}
                         </div>
                       </div>
-                      
-                      <button
-                        onClick={() => onDeleteField(field.id)}
-                        className="ml-4 px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-semibold text-sm transition-all flex items-center gap-2 border border-red-200"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete Field
-                      </button>
                     </div>
                   </div>
 
@@ -342,14 +330,6 @@ export default function FieldsTab({
                                 {category.name}
                               </span>
                             </div>
-                            
-                            <button
-                              onClick={() => onDeleteCategory(category.id)}
-                              className="ml-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-100 rounded transition-all flex-shrink-0"
-                              title="Delete category"
-                            >
-                              <Trash2 className="w-4 h-4 text-red-600" />
-                            </button>
                           </div>
                         ))}
                       </div>

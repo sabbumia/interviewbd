@@ -1,6 +1,7 @@
 // src/app/admin/_components/UsersTab.tsx
 
 import { useState } from "react";
+import Link from "next/link";
 import { Trash2, Users, Search, Shield, CheckCircle, XCircle, Award, Filter, ShieldCheck, Crown, Check } from "lucide-react";
 import { User } from "./types";
 import { getBadge } from "./types";
@@ -240,7 +241,7 @@ export default function UsersTab({ users, currentUserId, onRoleChange, onDeleteU
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-gray-900 ml-2">{u.name}</span>
+                              <Link href={`/users/${u.id}`}> <span className="font-semibold text-gray-900 ml-2">{u.name}</span> </Link>
                               {isCurrentUser && (
                                 <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">
                                   You

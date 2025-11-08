@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Flag, Trash2, Check, AlertTriangle, User, Tag, MessageSquare, Clock, Shield } from "lucide-react";
+import Link from "next/link";
 import { Report } from "./types";
 
 interface ReportsTabProps {
@@ -122,7 +123,8 @@ export default function ReportsTab({ reports, onReportAction }: ReportsTabProps)
                             REPORTED CONTENT
                           </span>
                           <span className="text-sm text-gray-600 font-medium">
-                            by {report.reportedByUser.name}
+                            by 
+                            <Link href={`/users/${report.reportedByUser.id}`}> {report.reportedByUser.name}</Link>
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -205,7 +207,7 @@ export default function ReportsTab({ reports, onReportAction }: ReportsTabProps)
                           )}
                         </div>
                               </div>
-                              <span className="text-sm font-semibold text-gray-900">{report.question.user.name}</span>
+                              <span className="text-sm font-semibold text-gray-900"> <Link href={`/users/${report.question.user.id}`}> {report.question.user.name}</Link></span>
                             </div>
                           </div>
 
@@ -262,7 +264,7 @@ export default function ReportsTab({ reports, onReportAction }: ReportsTabProps)
                           )}
                         
                         </div>
-                        {report.reportedByUser.name}
+                        <Link href={`/users/${report.reportedByUser.id}`}> {report.reportedByUser.name}</Link>
 
                         </div>
                       </div>

@@ -40,7 +40,7 @@ export default function AdminDashboard() {
         return;
       }
       const data = await res.json();
-      if (data.user.role !== "admin" && data.user.role !== "moderator") {
+      if (data.user.role !== "admin") {
         router.push("/");
         return;
       }

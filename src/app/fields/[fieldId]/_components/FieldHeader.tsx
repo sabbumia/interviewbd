@@ -1,5 +1,6 @@
 // src/app/fields/[fieldId]/_components/FieldHeader.tsx
 import { Tag, FolderOpen, Search } from 'lucide-react';
+import Link from 'next/link';
 
 interface Field {
   id: string;
@@ -30,7 +31,8 @@ export default function FieldHeader({
           <div className="flex-1">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 rounded-full mb-4 border border-blue-500/30">
               <Tag className="w-4 h-4 text-blue-400" />
-              <span className="text-blue-300 text-sm font-medium">Field</span>
+              <Link
+                    href={`/fields`} className="text-blue-300 text-sm font-medium">Field</Link>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">
               {field.name}

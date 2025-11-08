@@ -1,7 +1,8 @@
 // src/app/admin/_components/UsersTab.tsx
 
 import { useState } from "react";
-import { Trash2, Users, Search, Shield, CheckCircle, XCircle, Award, Filter, ShieldCheck, Crown } from "lucide-react";
+import Link from "next/link";
+import { Trash2, Users, Search, Shield, CheckCircle, XCircle, Award, Filter, ShieldCheck, Crown, Check } from "lucide-react";
 import { User } from "./types";
 import { getBadge } from "./types";
 
@@ -189,9 +190,6 @@ export default function UsersTab({ users, currentUserId, onRoleChange, onDeleteU
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    Actions
-                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -208,21 +206,39 @@ export default function UsersTab({ users, currentUserId, onRoleChange, onDeleteU
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                            <span className="text-blue-700 font-bold text-sm">
-                              {u.name.charAt(0).toUpperCase()}
-                            </span>
+                            
+                            <div className="relative flex-shrink-0">
+                          <img
+                            src={
+                              u.profilePicture ||
+                              "/default-avatar.png"
+                            }
+                            alt={u.name}
+                            className="w-14 h-14 rounded-full object-cover border-2 border-gray-200 shadow-sm"
+                            onError={(e) => {
+                              e.currentTarget.src = "/default-avatar.png";
+                            }}
+                          />
+                          {u.isVerified && (
+                            <div className="absolute -bottom-1 -right-1 bg-blue-600 rounded-full p-1 border-2 border-white shadow-md">
+                              <Check className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                          {u.role === "admin" && (
+                            <div className="absolute -top-1 -right-1 p-1 bg-gradient-to-br from-red-500 to-orange-600 rounded-full border-2 border-white">
+                              <Crown className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                          {u.role === "moderator" && (
+                            <div className="absolute -top-1 -right-1 p-1 bg-gradient-to-br from-red-400 to-yellow-800 rounded-full border-2 border-white">
+                              <ShieldCheck className="w-3 h-3 text-white" />
+                            </div>
+                          )}
+                        </div>
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-semibold text-gray-900">{u.name}</span>
-                              {u.isVerified && (
-                                <img
-                                  src="https://res.cloudinary.com/dk7yaqqyt/image/upload/v1762100837/interview-qa-profiles/xf7lo8jpjhqcf6sju1xx.png"
-                                  alt="Verified"
-                                  className="w-4 h-4"
-                                  title="Verified user"
-                                />
-                              )}
+                              <Link href={`/users/${u.id}`}> <span className="font-semibold text-gray-900 ml-2">{u.name}</span> </Link>
                               {isCurrentUser && (
                                 <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-semibold">
                                   You
@@ -274,7 +290,7 @@ export default function UsersTab({ users, currentUserId, onRoleChange, onDeleteU
                         </div>
                       </td>
 
-                      {/* Role Column */}
+                     {/* Role Column */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         {u.role=='user' && <span className="text-sm text-gray-600">👤 User</span>}
                         {u.role=='moderator' && <span className="text-sm text-gray-600">🛡️ Moderator</span>}
@@ -296,20 +312,7 @@ export default function UsersTab({ users, currentUserId, onRoleChange, onDeleteU
                         )}
                       </td>
 
-                      {/* Actions Column */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {!isCurrentUser ? (
-                          <button
-                            onClick={() => onDeleteUser(u.id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-sm font-semibold transition-all border border-red-200"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                            Delete
-                          </button>
-                        ) : (
-                          <span className="text-xs text-gray-400 italic">Cannot delete self</span>
-                        )}
-                      </td>
+                      
                     </tr>
                   );
                 })}

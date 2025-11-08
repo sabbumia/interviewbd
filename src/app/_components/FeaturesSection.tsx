@@ -1,49 +1,55 @@
 // app/_components/FeaturesSection.tsx
-import { BookOpen, Users, Award, MessageSquare, Shield, TrendingUp } from 'lucide-react';
+import { BookOpen, Users, Trophy, MessageSquare, Shield, TrendingUp } from 'lucide-react';
 
 export default function FeaturesSection() {
   const features = [
     {
       icon: BookOpen,
-      title: 'Diverse Question Bank',
-      description: 'Access thousands of interview questions across multiple fields and categories'
+      title: 'Comprehensive Question Bank',
+      description: 'Access thousands of curated interview questions across multiple industries and difficulty levels',
+      color: 'from-blue-600 to-indigo-600'
     },
     {
       icon: Users,
-      title: 'Connect & Network',
-      description: 'Build connections with professionals and learners in your field'
+      title: 'Professional Network',
+      description: 'Connect with industry professionals, share experiences, and build meaningful relationships',
+      color: 'from-purple-600 to-pink-600'
     },
     {
-      icon: Award,
-      title: 'Earn Badges',
-      description: 'Get recognized for your contributions with achievement badges'
+      icon: Trophy,
+      title: 'Achievement System',
+      description: 'Earn badges and recognition for your contributions and track your progress',
+      color: 'from-orange-600 to-amber-600'
     },
     {
       icon: MessageSquare,
-      title: 'Real-time Messaging',
-      description: 'Chat with other users and share knowledge instantly'
+      title: 'Real-time Communication',
+      description: 'Instant messaging system to collaborate and share knowledge with peers',
+      color: 'from-emerald-600 to-teal-600'
     },
     {
       icon: Shield,
-      title: 'Verified Accounts',
-      description: 'Get the blue verification badge and build credibility'
+      title: 'Verified Profiles',
+      description: 'Build credibility with verified badges and stand out in the community',
+      color: 'from-rose-600 to-pink-600'
     },
     {
       icon: TrendingUp,
-      title: 'Track Progress',
-      description: 'Monitor your learning journey and see your growth over time'
+      title: 'Progress Analytics',
+      description: 'Monitor your learning journey with detailed insights and performance metrics',
+      color: 'from-violet-600 to-purple-600'
     }
   ];
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+    <section className="py-20 px-4 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Why Choose InterviewBD?
           </h2>
-          <p className="text-lg text-gray-600">
-            Everything you need to ace your interviews
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Everything you need to succeed in your interviews, all in one platform
           </p>
         </div>
 
@@ -53,13 +59,13 @@ export default function FeaturesSection() {
             return (
               <div
                 key={i}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                className="group bg-white rounded-2xl p-8 shadow-lg border-2 border-gray-100 hover:border-indigo-200 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-white" />
+                <div className={`w-14 h-14 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-md`}>
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             );
           })}

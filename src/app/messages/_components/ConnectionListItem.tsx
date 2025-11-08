@@ -1,6 +1,8 @@
 // src/app/messages/_components/ConnectionListItem.tsx
 "use client";
 
+import { Check } from "lucide-react";
+
 interface ConnectionListItemProps {
   otherUser: any;
   unreadCount: number;
@@ -42,6 +44,15 @@ export default function ConnectionListItem({
             online ? "bg-green-500" : "bg-gray-300"
           }`}
         />
+         {/* Verified Badge - Top Right */}
+            {otherUser.isVerified && (
+              <div
+                className="absolute top-0 left-9 bg-blue-600 rounded-full border-2 border-white shadow-md"
+                title="Verified User"
+              >
+                <Check className="w-3 h-3 text-white" />
+              </div>
+            )}
       </div>
 
       <div className="flex-1 min-w-0 text-left">
@@ -50,16 +61,14 @@ export default function ConnectionListItem({
             <span className={`font-medium truncate ${isSelected ? "text-blue-700" : "text-gray-900"}`}>
               {otherUser.name}
             </span>
-            {otherUser.isVerified && (
-              <img
-                src="https://res.cloudinary.com/dk7yaqqyt/image/upload/v1762100837/interview-qa-profiles/xf7lo8jpjhqcf6sju1xx.png"
-                alt="Verified"
-                className="w-4 h-4 flex-shrink-0"
-              />
-            )}
             {otherUser.role === "admin" && (
               <span className="text-xs bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-medium flex-shrink-0">
                 Admin
+              </span>
+            )}
+            {otherUser.role === "moderator" && (
+              <span className="text-xs bg-red-50 text-orange-500 px-1.5 py-0.5 rounded font-medium flex-shrink-0">
+                Moderator
               </span>
             )}
           </div>

@@ -17,6 +17,7 @@ import {
   Crown,
   Mail,
 } from "lucide-react";
+import Link from 'next/link';
 import { Analytics } from "./types";
 import { getBadge } from "./types";
 
@@ -314,9 +315,11 @@ export default function OverviewTab({
                         </div>
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-xl text-gray-900">
-                              {contributor.user.name}
-                            </span>
+                            <Link href={`/users/${contributor.user.id}`}>
+                              <span className="font-bold text-xl text-gray-900">
+                                {contributor.user.name}
+                              </span>
+                            </Link>
                             {badge && (
                               <span className="text-xl" title={badge.name}>
                                 {badge.emoji}

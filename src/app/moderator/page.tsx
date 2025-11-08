@@ -233,30 +233,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteField = async (fieldId: string) => {
-    if (!confirm("Delete this field and all its categories?")) return;
-
-    try {
-      await fetch(`/api/fields/${fieldId}`, { method: "DELETE" });
-      fetchFields();
-      fetchAnalytics();
-    } catch (error) {
-      console.error("Error deleting field:", error);
-    }
-  };
-
-  const handleDeleteCategory = async (categoryId: string) => {
-    if (!confirm("Delete this category and all its questions?")) return;
-
-    try {
-      await fetch(`/api/categories/${categoryId}`, { method: "DELETE" });
-      fetchFields();
-      fetchAnalytics();
-    } catch (error) {
-      console.error("Error deleting category:", error);
-    }
-  };
-
   if (loading) {
     return (
       <Loading message="Loading admin dashboard..." />
@@ -271,6 +247,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar
         userName={user.name}
+        userProfilePicture={user.profilePicture ?? ""}
         activeTab={activeTab}
         pendingReportsCount={reports.length}
         pendingVerificationsCount={pendingRequests.length}
@@ -314,8 +291,6 @@ export default function AdminDashboard() {
             fields={fields}
             onCreateField={handleCreateField}
             onCreateCategory={handleCreateCategory}
-            onDeleteField={handleDeleteField}
-            onDeleteCategory={handleDeleteCategory}
           />
         )}
       </div>
