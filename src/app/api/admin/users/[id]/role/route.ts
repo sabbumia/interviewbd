@@ -11,7 +11,7 @@ export async function PUT(
 ) {
   try {
     const session = await getSession();
-    if (!session || session.role !== 'admin') {
+    if (!session || (session.role !== 'admin' && session.role !== 'moderator')) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }
