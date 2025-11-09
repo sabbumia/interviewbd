@@ -54,14 +54,14 @@ export default function Footer() {
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           
           {/* Brand & Description */}
+          {/* Brand & Description */}
           <div className="lg:col-span-1">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                InterviewBD
-              </span>
+            <Link href="/" className="inline-block mb-4 group">
+              <img
+                src="/footerlogo.png"
+                alt="InterviewBD"
+                className="h-20 w-auto group-hover:scale-105 transition-transform"
+              />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Your ultimate platform for interview preparation and professional networking in Bangladesh.

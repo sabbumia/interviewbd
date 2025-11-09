@@ -108,14 +108,13 @@ export default function Navbar() {
             <div className="flex-shrink-0">
               <Link
                 href="/"
-                className="text-xl sm:text-2xl font-bold tracking-tight hover:opacity-80 transition-all duration-300 flex items-center gap-2 group"
+                className="hover:opacity-80 transition-all duration-300 group"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <span className="sm:inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  InterviewBD
-                </span>
+                <img
+                  src="/interviewbd.png"
+                  alt="InterviewBD"
+                  className="h-15 w-auto group-hover:scale-105 transition-transform"
+                />
               </Link>
             </div>
 
