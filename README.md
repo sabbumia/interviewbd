@@ -1,13 +1,4 @@
 # InterviewBD 🎯
-
-> A comprehensive interview preparation platform where professionals share real interview questions and answers to help others succeed in their career journey.
-
-[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://interviewbd.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
-
-## 🌟 Overview
-
 InterviewBD is a community-driven platform designed to help job seekers prepare for interviews across various fields and industries. Users can browse, contribute, and learn from real interview questions shared by verified professionals, making interview preparation more accessible and effective.
 
 **Live Site:** [interviewbd.vercel.app](https://interviewbd.vercel.app)
@@ -45,7 +36,7 @@ InterviewBD is a community-driven platform designed to help job seekers prepare 
 ## 🏗️ Tech Stack
 
 ### Frontend
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **UI Components:** Custom React components
